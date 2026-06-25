@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
-import { ShieldAlert, AlertCircle, Sparkles, ChevronRight, Check } from 'lucide-react';
+import { ShieldAlert, AlertCircle, Sparkles, ChevronRight, Check, RefreshCw } from 'lucide-react';
 import { PreSellConfig, THEME_STYLES } from '../types';
 
 interface AgeGateProps {
@@ -11,6 +11,7 @@ interface AgeGateProps {
 export default function AgeGate({ config, onVerify }: AgeGateProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [denied, setDenied] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   // Date of birth state (used if verificationMode is 'birth-date')
   const [day, setDay] = useState('');
@@ -21,7 +22,22 @@ export default function AgeGate({ config, onVerify }: AgeGateProps) {
 
   const handleVerifySuccess = () => {
     setErrorMessage(null);
-    onVerify();
+    if (config.directRedirect) {
+      setIsRedirecting(true);
+      // Attempt actual redirection
+      try {
+        window.open(config.destinationUrl, '_blank', 'noopener,noreferrer');
+      } catch (e) {
+        window.location.href = config.destinationUrl;
+      }
+      // Delay so they can see the Redirecionando feedback in preview
+      setTimeout(() => {
+        onVerify();
+        setIsRedirecting(false);
+      }, 2000);
+    } else {
+      onVerify();
+    }
   };
 
   const handleVerifyFailure = () => {
@@ -71,6 +87,38 @@ export default function AgeGate({ config, onVerify }: AgeGateProps) {
       handleVerifyFailure();
     }
   };
+
+  if (isRedirecting) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-500 ${styles.bg}`}>
+        <div className={`absolute inset-0 bg-gradient-to-b ${styles.gradient} opacity-80`} />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-emerald-600/10 blur-[120px] animate-pulse-slow" />
+        
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className={`relative z-10 w-full max-w-md p-8 rounded-2xl border backdrop-blur-xl shadow-2xl text-center ${styles.cardBg} border-emerald-500/20 shadow-emerald-500/5`}
+          id="redirecting-card"
+        >
+          <div className="mx-auto w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mb-6">
+            <RefreshCw className="animate-spin" size={32} />
+          </div>
+
+          <h2 className="text-2xl font-display font-bold tracking-tight text-white mb-3">
+            Acesso Autorizado!
+          </h2>
+          
+          <p className="text-neutral-400 text-sm leading-relaxed mb-6">
+            Sua maioridade foi confirmada. Redirecionando com segurança de forma criptografada...
+          </p>
+
+          <div className="text-[11px] font-mono text-emerald-400 bg-emerald-500/5 py-2 px-3 rounded-lg border border-emerald-500/10 break-all">
+            {config.destinationUrl}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (denied) {
     return (

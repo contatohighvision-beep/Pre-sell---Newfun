@@ -15,17 +15,18 @@ import { PreSellConfig, PreSellTheme } from './types';
 export default function App() {
   // Initial pre-sell config (perfectly responsive & optimized for conversion)
   const [config, setConfig] = useState<PreSellConfig>({
-    destinationUrl: 'https://site-oficial-exemplo.com',
-    nicheTitle: 'Acesso VIP ao Conteúdo Adulto',
-    nicheSubtitle: 'Aviso de Conteúdo Adulto',
-    warningText: 'Este site contém material adulto explícito e sensual reservado para maiores de idade. Ao entrar, você confirma que tem plena capacidade legal e é maior de 18 anos.',
-    theme: 'luxury-dark',
+    destinationUrl: 'https://playnew.fun/?id=588086680&currency=BRL&type=2',
+    nicheTitle: 'Plataforma de Jogos Online Autenticada',
+    nicheSubtitle: 'Verificação Obrigatória de Idade',
+    warningText: 'Jogos de azar e apostas online envolvem riscos financeiros e são proibidos por lei para menores de 18 anos. Confirme sua maioridade para entrar.',
+    theme: 'casino-green',
     verificationMode: 'single-click',
-    ctaText: 'ACESSAR CONTEÚDO VIP 🔞',
+    ctaText: 'ENTRAR NO CASSINO OFICIAL 🎰',
     countdownMinutes: 5,
     showProgressTimer: true,
-    companyName: 'CONTEÚDO VIP ADULTO',
+    companyName: 'PLATAFORMA AUTORIZADA',
     logoText: '18+',
+    directRedirect: true,
   });
 
   // Flow State

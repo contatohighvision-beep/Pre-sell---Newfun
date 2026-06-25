@@ -223,6 +223,34 @@ export default function ConfigPanel({
               </p>
             </div>
 
+            {/* Direct Redirect Toggle */}
+            <div className="space-y-2 pt-2 border-t border-neutral-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider block">
+                    Redirecionamento Direto
+                  </span>
+                  <span className="text-[11px] text-neutral-500 block max-w-[280px]">
+                    Ao clicar em "Sim, tenho +18 anos", redireciona o usuário na hora (sem tela intermediária).
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => updateField('directRedirect', !config.directRedirect)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    config.directRedirect ? 'bg-emerald-600' : 'bg-neutral-800'
+                  }`}
+                  id="toggle-direct-redirect"
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      config.directRedirect ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
             {/* Custom Texts Section */}
             <div className="space-y-4 pt-2 border-t border-neutral-800">
               <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider block">

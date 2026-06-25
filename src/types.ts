@@ -14,6 +14,7 @@ export interface PreSellConfig {
   showProgressTimer: boolean;
   companyName: string;
   logoText: string;
+  directRedirect: boolean;
 }
 
 export const THEME_STYLES = {

@@ -251,6 +251,30 @@ export default function CodeExporter({ config }: CodeExporterProps) {
 
     // Handler for successful age confirmation
     function unlockAccess() {
+      if (${config.directRedirect}) {
+        gateScreen.classList.add('hidden');
+        deniedScreen.classList.add('hidden');
+        
+        // Show immediate redirect screen with feedback
+        const redirectBox = document.createElement('div');
+        redirectBox.className = "w-full max-w-md p-8 rounded-2xl border border-emerald-500/20 bg-[" + '${colors.card}' + "]/80 backdrop-blur-xl shadow-2xl text-center relative z-10 mx-auto";
+        redirectBox.innerHTML = '<div class="mx-auto w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mb-6"><svg class="w-8 h-8 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"></path></svg></div><h2 class="text-2xl font-display font-bold tracking-tight text-white mb-3">Acesso Autorizado!</h2><p class="text-neutral-400 text-sm leading-relaxed mb-6">Sua maioridade foi confirmada. Redirecionando com segurança de forma criptografada...</p><div class="text-[11px] font-mono text-emerald-400 bg-emerald-500/5 py-2 px-3 rounded-lg border border-emerald-500/10 break-all">' + REDIRECT_URL + '</div>';
+        
+        gateScreen.parentNode.appendChild(redirectBox);
+        
+        // Try opening tab
+        try {
+          window.open(REDIRECT_URL, '_blank', 'noopener,noreferrer');
+        } catch (e) {
+          window.location.href = REDIRECT_URL;
+        }
+        // Force redirect in case popup blocker blocked new tab
+        setTimeout(() => {
+          window.location.href = REDIRECT_URL;
+        }, 1500);
+        return;
+      }
+
       gateScreen.classList.add('hidden');
       deniedScreen.classList.add('hidden');
       preSellScreen.classList.remove('hidden');
@@ -355,7 +379,7 @@ export default function CodeExporter({ config }: CodeExporterProps) {
 
 // Pre-Sell Age Gate Component with Tailwind CSS & Lucide Icons
 export default function PreSellAgeGate() {
-  const [stage, setStage] = useState<'gate' | 'approved' | 'denied'>('gate');
+  const [stage, setStage] = useState<'gate' | 'approved' | 'denied' | 'redirecting'>('gate');
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -379,7 +403,19 @@ export default function PreSellAgeGate() {
 
   const handleVerify = (isOver18) => {
     if (isOver18) {
-      setStage('approved');
+      if (${config.directRedirect}) {
+        setStage('redirecting');
+        try {
+          window.open('${config.destinationUrl}', '_blank', 'noopener,noreferrer');
+        } catch (e) {
+          window.location.href = '${config.destinationUrl}';
+        }
+        setTimeout(() => {
+          window.location.href = '${config.destinationUrl}';
+        }, 1500);
+      } else {
+        setStage('approved');
+      }
     } else {
       setStage('denied');
     }
@@ -406,7 +442,19 @@ export default function PreSellAgeGate() {
     }
 
     if (age >= 18) {
-      setStage('approved');
+      if (${config.directRedirect}) {
+        setStage('redirecting');
+        try {
+          window.open('${config.destinationUrl}', '_blank', 'noopener,noreferrer');
+        } catch (e) {
+          window.location.href = '${config.destinationUrl}';
+        }
+        setTimeout(() => {
+          window.location.href = '${config.destinationUrl}';
+        }, 1500);
+      } else {
+        setStage('approved');
+      }
     } else {
       setStage('denied');
     }
@@ -460,6 +508,26 @@ export default function PreSellAgeGate() {
               </button>
             </form>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  // 1.5 REDIRECTING SCREEN
+  if (stage === 'redirecting') {
+    return (
+      <div className="min-h-screen bg-[${colors.bg}] text-white flex items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-md p-8 rounded-3xl border border-emerald-500/20 bg-[${colors.card}]/80 text-center relative z-10 mx-auto">
+          <div className="mx-auto w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mb-6">
+            <svg className="w-8 h-8 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">Acesso Autorizado!</h2>
+          <p className="text-neutral-400 text-sm mb-6">Sua maioridade foi confirmada. Redirecionando com segurança...</p>
+          <div className="text-xs font-mono text-emerald-400 bg-emerald-500/5 py-2 px-3 rounded-lg border border-emerald-500/10 break-all">
+            ${config.destinationUrl}
+          </div>
         </div>
       </div>
     );
