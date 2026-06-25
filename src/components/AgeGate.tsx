@@ -24,17 +24,18 @@ export default function AgeGate({ config, onVerify }: AgeGateProps) {
     setErrorMessage(null);
     if (config.directRedirect) {
       setIsRedirecting(true);
-      // Attempt actual redirection
-      try {
-        window.open(config.destinationUrl, '_blank', 'noopener,noreferrer');
-      } catch (e) {
-        window.location.href = config.destinationUrl;
-      }
-      // Delay so they can see the Redirecionando feedback in preview
+      // Brief aesthetic delay so the user feels the secure check and confirmation, then direct redirection
       setTimeout(() => {
-        onVerify();
-        setIsRedirecting(false);
-      }, 2000);
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.location.href = config.destinationUrl;
+          } else {
+            window.location.href = config.destinationUrl;
+          }
+        } catch (e) {
+          window.location.href = config.destinationUrl;
+        }
+      }, 1200);
     } else {
       onVerify();
     }
