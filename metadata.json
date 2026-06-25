@@ -1,0 +1,6 @@
+{
+  "name": "Aviso de Maioridade 18+",
+  "description": "Uma página de pré-venda (pre-sell) altamente profissional com aviso e verificação de idade para maiores de 18 anos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
